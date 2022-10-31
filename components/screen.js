@@ -18,7 +18,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 
-const db = getDatabase(app);
+let db = getDatabase(app);
 
 let personas = {};
 const dbRef = ref(db, 'personas/');
