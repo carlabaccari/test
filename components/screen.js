@@ -18,88 +18,88 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 
-let db = getDatabase(app);
-
 let personas = {};
-const dbRef = ref(db, 'personas/');
-onValue(dbRef, async snapshot => {
-  personas = await snapshot.val();
-  personas.shift();
-  console.log(personas);
-});
-/*
 let perros = {};
-const dbRef2 = ref(db, 'perros/');
-onValue(dbRef2, async snapshot => {
-  perros = await snapshot.val();
-  perros.shift();
-  console.log(perros);
-});
-*/
+
 const Screen = () => {
   const renderItem = ({item}) => <Text>{item.nombre}</Text>;
   const [nombrePersona, setNombrePersona] = useState('');
   const [nombrePerro, setNombrePerro] = useState('');
-  const [rtData, setRtData] = useState([]);
+  let db = getDatabase(app);
+  useEffect(() => {
+    let dbRef = ref(db, 'personas/');
+    onValue(dbRef, async snapshot => {
+      personas = await snapshot.val();
+      personas.shift();
+      console.log(personas);
+    });
+  }, [db]);
 
+  useEffect(() => {
+    let dbRef2 = ref(db, 'perros/');
+    onValue(dbRef2, async snapshot => {
+      perros = await snapshot.val();
+      perros.shift();
+      console.log(perros);
+    });
+  }, [db]);
   const CreatePersona = nombre => {
-    let last = personas.length + 1;
+    let lastpersonas = personas.length + 1;
     db = getDatabase();
-    set(ref(db, 'personas/' + last), {
-      id: last,
+    set(ref(db, 'personas/' + lastpersonas), {
+      id: lastpersonas,
       nombre: nombre,
     });
 
-    setNombrePersona('');
-    console.log('Persona ' + nombre + ' agregada correctamente');
+    //console.log('Persona ' + nombre + ' agregada correctamente');
   };
-  /*
+
   const CreatePerro = nombre => {
-    //let last = perros.length + 1;
-    const perroId = 1;
+    let lastperros = perros.length + 1;
     db = getDatabase();
-    set(ref(db, 'perros/' + perroId), {
+    set(ref(db, 'perros/' + lastperros), {
+      id: lastperros,
       nombre: nombre,
     });
-
-    setNombrePerro('');
-    console.log('Perro ' + nombre + ' agregado correctamente');
+    //console.log('Perro ' + nombre + ' agregado correctamente');
   };
-  */
-  /*
+
+  return (
+    <View style={{flexDirection: 'column', height: '100%'}}>
+      <View style={{flex: 1, borderWidth: 5, alignItems: 'center'}}>
+        <Text>PERSONAS</Text>
         <TextInput
+          style={{borderWidth: 5}}
           placeholder="Ingrese nombre persona"
           onChangeText={text => setNombrePersona(text)}
         />
 
         <Button
           title="Crear persona"
-          onPress={nombrePersona => CreatePersona(nombrePersona)}
+          onPress={() => CreatePersona(nombrePersona)}
         />
-
-                <TextInput
+        <FlatList
+          style={{height: 100, width: '100%', borderWidth: 2}}
+          keyExtractor={item => item.id}
+          data={personas}
+          renderItem={renderItem}
+        />
+      </View>
+      <View style={{flex: 1, borderWidth: 5, alignItems: 'center'}}>
+        <Text>Perros</Text>
+        <TextInput
+          style={{borderWidth: 5}}
           placeholder="Ingrese nombre perro"
           onChangeText={text => setNombrePerro(text)}
         />
-        <Button
-          title="Crear perro"
-          onPress={nombrePerro => CreatePerro(nombrePerro)}
-        />
-                <FlatList
-          style={{height: 100, borderWidth: 5}}
+        <Button title="Crear perro" onPress={() => CreatePerro(nombrePerro)} />
+        <FlatList
+          style={{height: 100, width: '100%', borderWidth: 2}}
           keyExtractor={item => item.id}
           data={perros}
           renderItem={renderItem}
         />
-         <FlatList
-          style={{height: 100, borderWidth: 5}}
-          keyExtractor={item => item.id}
-          data={personas}
-          renderItem={renderItem}
-        /> */
-  return (
-    <View style={{flexDirection: 'column'}}>
-      <Text style={{flex: 1, borderWidth: 5}}>PERSONAS</Text>
+      </View>
     </View>
   );
 };
