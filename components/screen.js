@@ -1,37 +1,40 @@
 import React, {useEffect, useState} from 'react';
 import {View, TextInput, Text, Button, FlatList} from 'react-native';
-import { firebase } from '@react-native-firebase/database';
-import database from '@react-native-firebase/database';
+// Import the functions you need from the SDKs you need
 
-//import { getDatabase, ref, set } from "firebase/database";
-import styles from './screen_style.js';
-
-
-
-//await database().goOffline();
-
-const reference = firebase
-  .app()
-  .database('https://pam-proyecto-clase-2-default-rtdb.firebaseio.com/')
-  .ref('/users/123');
-
-//const personas = database().ref('https://pam-proyecto-clase-2-default-rtdb.firebaseio.com');
-//const perros = getDatabase().ref('/perro/');
-/*const Persona = {
-  name: 'Persona',
-  properties: {
-    id: 'int',
-    nombre: 'string',
-  },
+import * as firebase from 'firebase/app';
+import {getDatabase, onValue, ref, set} from 'firebase/database';
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: 'AIzaSyCt09GXyzGao6S7LqETxXJ7UFX4Gw-QK6U',
+  authDomain: 'pam-proyecto-clase-2.firebaseapp.com',
+  databaseURL: 'https://pam-proyecto-clase-2-default-rtdb.firebaseio.com',
+  projectId: 'pam-proyecto-clase-2',
+  storageBucket: 'pam-proyecto-clase-2.appspot.com',
+  messagingSenderId: '704008722181',
+  appId: '1:704008722181:web:30af3b2e24f5674413896c',
 };
 
-const Perro = {
-  name: 'Perro',
-  properties: {
-    id: 'int',
-    nombre: 'string',
-  },
-};
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+let personas = {};
+const dbRef = ref(db, 'personas/');
+onValue(dbRef, async snapshot => {
+  personas = await snapshot.val();
+  personas.shift();
+  console.log(personas);
+});
+/*
+let perros = {};
+const dbRef2 = ref(db, 'perros/');
+onValue(dbRef2, async snapshot => {
+  perros = await snapshot.val();
+  perros.shift();
+  console.log(perros);
+});
 */
 const Screen = () => {
   const renderItem = ({item}) => <Text>{item.nombre}</Text>;
@@ -41,72 +44,62 @@ const Screen = () => {
 
   const CreatePersona = nombre => {
     let last = personas.length + 1;
-    database()
-      .ref('/persona/' + last)
-      .set({
-        id: last,
-        nombre: nombre,
-      });
+    db = getDatabase();
+    set(ref(db, 'personas/' + last), {
+      id: last,
+      nombre: nombre,
+    });
+
     setNombrePersona('');
     console.log('Persona ' + nombre + ' agregada correctamente');
   };
+  /*
   const CreatePerro = nombre => {
-    let last = perros.length + 1;
-    database()
-      .ref('/perro/' + last)
-      .set({
-        id: last,
-        nombre: nombre,
-      });
+    //let last = perros.length + 1;
+    const perroId = 1;
+    db = getDatabase();
+    set(ref(db, 'perros/' + perroId), {
+      nombre: nombre,
+    });
+
     setNombrePerro('');
     console.log('Perro ' + nombre + ' agregado correctamente');
   };
-
-  return (
-    <View style={styles.container1}>
-      <View style={styles.container2}>
-        <Text style={styles.text1}>PERSONAS</Text>
+  */
+  /*
         <TextInput
           placeholder="Ingrese nombre persona"
-          style={styles.text1}
           onChangeText={text => setNombrePersona(text)}
         />
 
         <Button
           title="Crear persona"
-          style={styles.text1}
           onPress={nombrePersona => CreatePersona(nombrePersona)}
         />
-        <View style={styles.container3}>
-          <FlatList
-            style={styles.flatlist1}
-            keyExtractor={item => item.id}
-            data={personas}
-            renderItem={renderItem}
-          />
-        </View>
-      </View>
-      <View style={styles.container2}>
-        <Text style={styles.text1}>PERROS</Text>
-        <TextInput
+
+                <TextInput
           placeholder="Ingrese nombre perro"
-          style={styles.text1}
           onChangeText={text => setNombrePerro(text)}
         />
         <Button
           title="Crear perro"
-          style={styles.text1}
           onPress={nombrePerro => CreatePerro(nombrePerro)}
         />
-        <View style={styles.container3}>
-          <FlatList
-            style={styles.flatlist1}
-            keyExtractor={item => item.id}
-            data={perros}
-            renderItem={renderItem}
-          />
-        </View>
-      </View>
+                <FlatList
+          style={{height: 100, borderWidth: 5}}
+          keyExtractor={item => item.id}
+          data={perros}
+          renderItem={renderItem}
+        />
+         <FlatList
+          style={{height: 100, borderWidth: 5}}
+          keyExtractor={item => item.id}
+          data={personas}
+          renderItem={renderItem}
+        /> */
+  return (
+    <View style={{flexDirection: 'column'}}>
+      <Text style={{flex: 1, borderWidth: 5}}>PERSONAS</Text>
     </View>
   );
 };

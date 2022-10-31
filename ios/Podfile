@@ -8,7 +8,6 @@ pod 'Firebase', :modular_headers => true
 pod 'FirebaseCore', :modular_headers => true
 pod 'GoogleUtilities', :modular_headers => true
 $RNFirebaseAsStaticFramework = true
-
 target 'test' do
   config = use_native_modules!
 
